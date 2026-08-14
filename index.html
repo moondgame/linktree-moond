@@ -4,6 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Link Saya</title>
+
+  <!-- Proteksi dasar: cegah situs ini di-embed di iframe orang lain (anti clickjacking) -->
+  <meta http-equiv="X-Frame-Options" content="DENY">
+  <!-- Batasi resource yang boleh dimuat halaman ini -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src https://cdnjs.cloudflare.com; frame-ancestors 'none';">
+  <!-- Jangan kirim info halaman asal saat orang klik link keluar -->
+  <meta name="referrer" content="no-referrer-when-downgrade">
+
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     body {
@@ -89,21 +97,22 @@
 </head>
 <body>
   <div class="container">
-    <img src="https://ibb.co.com/4nBxbfqv"><img src="https://i.ibb.co.com/8LFVyBCv/IMG-20260327-WA0044.jpg" alt="Foto Profil" class="profile-img">
+    <img src="https://i.ibb.co.com/8LFVyBCv/IMG-20260327-WA0044.jpg" alt="Foto Profil" class="profile-img">
     <h1>Moon D</h1>
     <p>🌟 Semua link ada di sini!</p>
-    <a href="https://saweria.co/Moondgame" class="link"><i class="fas fa-hand-holding-dollar"></i> Donasi Saweria</a>
-    <a href="https://discord.gg/JjU2mXhcq" class="link"><i class="fab fa-discord"></i> Discord</a>
-    <a href="https://youtube.com/@moon_d-v3t?si=QsRbEjRRboqyiG1s" class="link"><i class="fab fa-youtube"></i> YouTube</a>
-    <a href="https://www.roblox.com/users/8766906281/profile" class="link"><i class="fas fa-gamepad"></i> Roblox</a>
-    <a href="https://instagram.com/plaayer_499" class="link"><i class="fab fa-instagram"></i> Instagram</a>
+    <a href="https://saweria.co/Moondgame" class="link" target="_blank" rel="noopener noreferrer"><i class="fas fa-hand-holding-dollar"></i> Donasi Saweria</a>
+    <a href="https://discord.gg/JjU2mXhcq" class="link" target="_blank" rel="noopener noreferrer"><i class="fab fa-discord"></i> Discord</a>
+    <a href="https://youtube.com/@moon_d-v3t?si=QsRbEjRRboqyiG1s" class="link" target="_blank" rel="noopener noreferrer"><i class="fab fa-youtube"></i> YouTube</a>
+    <a href="https://www.roblox.com/users/8766906281/profile" class="link" target="_blank" rel="noopener noreferrer"><i class="fas fa-gamepad"></i> Roblox</a>
+    <a href="https://instagram.com/plaayer_499" class="link" target="_blank" rel="noopener noreferrer"><i class="fab fa-instagram"></i> Instagram</a>
 
     <div class="social-icons">
-      <a href="https://twitter.com/moond499"><i class="fab fa-twitter"></i></a>
-      <a href="https://tiktok.com/@n0_m00nd_499"><i class="fab fa-tiktok"></i></a>
-      <a href="https://github.com/moondgame"><i class="fab fa-github"></i></a>
+      <a href="https://twitter.com/moond499" target="_blank" rel="noopener noreferrer"><i class="fab fa-twitter"></i></a>
+      <a href="https://tiktok.com/@n0_m00nd_499" target="_blank" rel="noopener noreferrer"><i class="fab fa-tiktok"></i></a>
+      <a href="https://github.com/moondgame" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i></a>
     </div>
   </div>
 </body>
 </html>
+
 
