@@ -5,162 +5,53 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Link Saya</title>
 
-  <!-- Proteksi dasar: cegah situs ini di-embed di iframe orang lain (anti clickjacking) -->
+  <!-- ===================== PROTEKSI DASAR ===================== -->
+  <!-- Cegah situs ini di-embed di iframe orang lain (anti clickjacking) -->
   <meta http-equiv="X-Frame-Options" content="DENY">
-  <!-- Batasi resource yang boleh dimuat halaman ini -->
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src * data:; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src https://cdnjs.cloudflare.com; script-src 'self' 'unsafe-inline'; frame-ancestors 'none';">
+
+  <!--
+    Content-Security-Policy (diperketat):
+    - default-src 'self'      -> semua resource default hanya boleh dari domain sendiri
+    - script-src 'self'       -> TIDAK ADA 'unsafe-inline'. Semua JS harus dari file script.js.
+                                  Kalau ada yang menyuntikkan <script>...</script> langsung
+                                  ke HTML (mis. lewat XSS), browser akan MENOLAK menjalankannya.
+    - style-src 'self'        -> TIDAK ADA 'unsafe-inline'. Semua CSS dari style.css.
+                                  Font Awesome sekarang di-hosting sendiri di /assets, bukan CDN,
+                                  jadi tidak perlu izinkan domain CDN eksternal sama sekali.
+    - font-src 'self'         -> font hanya dari /assets/webfonts milik sendiri
+    - img-src 'self' https://i.ibb.co.com data:
+                                  -> hanya izinkan domain foto profil yang memang dipakai,
+                                     bukan img-src * (yang tadinya mengizinkan gambar dari domain manapun)
+    - object-src 'none'       -> blokir plugin lama (Flash dll) yang sering jadi celah
+    - base-uri 'self'         -> cegah penyisipan <base> jahat yang bisa membajak semua link relatif
+    - form-action 'self'      -> kalau suatu saat ada form, hasil submit tidak bisa dialihkan ke situs lain
+    - frame-ancestors 'none'  -> lapisan kedua anti-iframe/clickjacking (redundan dgn X-Frame-Options)
+    - upgrade-insecure-requests -> paksa semua request pakai HTTPS
+  -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' https://i.ibb.co.com data:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests;">
+
   <!-- Jangan kirim info halaman asal saat orang klik link keluar -->
   <meta name="referrer" content="no-referrer-when-downgrade">
+  <!-- Cegah browser lama "menebak" tipe file (mitigasi MIME-sniffing attack) -->
+  <meta http-equiv="X-Content-Type-Options" content="nosniff">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Poppins', sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: linear-gradient(160deg, #05010a 0%, #1a0508 35%, #2b0714 55%, #0a0a2e 80%, #050015 100%);
-      color: #fff;
-    }
-
-    .container {
-      text-align: center;
-      max-width: 400px;
-      width: 100%;
-      padding: 20px;
-    }
-
-    .profile-img {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      border: 3px solid #ff2d55;
-      margin-bottom: 15px;
-      object-fit: cover;
-      box-shadow: 0 0 18px #ff2d55, 0 0 30px rgba(59, 91, 219, 0.4);
-    }
-
-    h1 {
-      font-size: 26px;
-      margin-bottom: 5px;
-      background: linear-gradient(90deg, #ff2d55, #a742f5, #3b5bdb);
-      -webkit-background-clip: text;
-      background-clip: text;
-      color: transparent;
-      text-shadow: 0 0 20px rgba(255, 45, 85, 0.3);
-    }
-
-    p {
-      font-size: 14px;
-      margin-bottom: 25px;
-      color: #ccc;
-    }
-
-    .link, .link-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 2px solid rgba(255, 45, 85, 0.25);
-      border-radius: 12px;
-      color: #fff;
-      text-decoration: none;
-      padding: 15px;
-      margin: 12px 0;
-      font-size: 18px;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 10px rgba(255, 45, 85, 0.25), inset 0 0 10px rgba(59, 91, 219, 0.1);
-      width: 100%;
-      box-sizing: border-box;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    .link:hover, .link-btn:hover {
-      background: linear-gradient(90deg, rgba(255, 45, 85, 0.25), rgba(59, 91, 219, 0.25));
-      border-color: #ff2d55;
-      transform: scale(1.05);
-      box-shadow: 0 0 20px rgba(255, 45, 85, 0.6), 0 0 15px rgba(59, 91, 219, 0.5);
-    }
-
-    /* Panel submenu */
-    .panel {
-      max-height: 0;
-      overflow: hidden;
-      opacity: 0;
-      transition: max-height 0.35s ease, opacity 0.3s ease, margin 0.35s ease;
-      margin: 0;
-    }
-
-    .panel.open {
-      max-height: 500px;
-      opacity: 1;
-      margin: 4px 0 12px 0;
-    }
-
-    .panel .link {
-      font-size: 16px;
-      padding: 12px;
-      margin: 8px 0;
-    }
-
-    .back-btn {
-      background: transparent;
-      box-shadow: none;
-      color: #ff2d55;
-      font-size: 14px;
-      padding: 8px;
-    }
-
-    .back-btn:hover {
-      background: rgba(255, 45, 85, 0.1);
-      transform: none;
-      box-shadow: none;
-    }
-
-    .chevron {
-      margin-left: auto;
-      transition: transform 0.3s ease;
-      font-size: 14px;
-    }
-
-    .link-btn.active .chevron {
-      transform: rotate(180deg);
-    }
-
-    .social-icons {
-      margin-top: 20px;
-    }
-
-    .social-icons a {
-      color: #5b7cfa;
-      font-size: 22px;
-      margin: 0 10px;
-      transition: 0.3s;
-    }
-
-    .social-icons a:hover {
-      color: #ff2d55;
-      transform: scale(1.2);
-    }
-  </style>
+  <!-- Font Awesome di-hosting SENDIRI (bukan dari CDN cdnjs) -->
+  <link rel="stylesheet" href="assets/css/fontawesome.min.css">
+  <!-- CSS terpisah -->
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <img src="https://i.ibb.co.com/8LFVyBCv/IMG-20260327-WA0044.jpg" alt="Foto Profil" class="profile-img">
-    <h1>MOOND</h1>
-    <p>Semua link ada di sini!</p>
+    <h1>Moon D</h1>
+    <p>🌟 Semua link ada di sini!</p>
 
     <!-- Tombol utama -->
     <a href="https://saweria.co/Moondgame" class="link" target="_blank" rel="noopener noreferrer">
       <i class="fas fa-hand-holding-dollar"></i> Donasi Saweria
     </a>
 
-    <button class="link-btn" id="btn-sosmed" onclick="togglePanel('sosmed')">
+    <button class="link-btn" id="btn-sosmed" data-panel="sosmed">
       <i class="fas fa-share-nodes"></i> Sosial Media <i class="fas fa-chevron-down chevron"></i>
     </button>
     <div class="panel" id="panel-sosmed">
@@ -174,7 +65,7 @@
       <a href="https://chat.whatsapp.com/D9xbjDXhOMH1kQyBLfcf4h" class="link" target="_blank" rel="noopener noreferrer"><i class="fab fa-whatsapp"></i> Komunitas WhatsApp</a>
     </div>
 
-    <button class="link-btn" id="btn-game" onclick="togglePanel('game')">
+    <button class="link-btn" id="btn-game" data-panel="game">
       <i class="fas fa-gamepad"></i> Game <i class="fas fa-chevron-down chevron"></i>
     </button>
     <div class="panel" id="panel-game">
@@ -182,22 +73,7 @@
     </div>
   </div>
 
-  <script>
-    function togglePanel(name) {
-      const panel = document.getElementById('panel-' + name);
-      const btn = document.getElementById('btn-' + name);
-      const isOpen = panel.classList.contains('open');
-
-      // Tutup semua panel lain
-      document.querySelectorAll('.panel').forEach(p => p.classList.remove('open'));
-      document.querySelectorAll('.link-btn').forEach(b => b.classList.remove('active'));
-
-      // Buka panel yang diklik jika sebelumnya tertutup
-      if (!isOpen) {
-        panel.classList.add('open');
-        btn.classList.add('active');
-      }
-    }
-  </script>
+  <!-- JS terpisah, dimuat paling akhir -->
+  <script src="script.js" defer></script>
 </body>
 </html>
